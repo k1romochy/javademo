@@ -1,0 +1,1 @@
+./mvnw liquibase:diff -Dliquibase.diffChangeLogFile=src/main/resources/db/changelog/db.changelog-***.xml
