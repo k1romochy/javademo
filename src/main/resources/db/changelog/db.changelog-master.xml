@@ -21,5 +21,6 @@
     </changeSet>
 
     <include file="db.changelog-diff-items.xml" relativeToChangelogFile="true"/>
+    <include file="db.changelog-orders.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

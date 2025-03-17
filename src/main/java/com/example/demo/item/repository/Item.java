@@ -1,5 +1,9 @@
 package com.example.demo.item.repository;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import com.example.demo.order.repository.Order;
 import com.example.demo.user.repository.User;
 
 import jakarta.persistence.Column;
@@ -8,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
@@ -32,6 +37,9 @@ public class Item {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToMany(mappedBy = "items")
+    private List<Order> orders = new ArrayList<>();
+    
     public Item() {
     }
 
@@ -85,5 +93,17 @@ public class Item {
 
     public void clearUser() {
         this.user = null;
+    }
+    
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
+    public List<Order> getOrders() {
+        return this.orders;
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
     }
 }

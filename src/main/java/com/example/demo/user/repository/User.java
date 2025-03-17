@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.demo.item.repository.Item;
+import com.example.demo.order.repository.Order;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,14 +23,16 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-
     private String name;
-    @Column(nullable = false)
     
+    @Column(nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
 
     public User() {
     }
@@ -76,5 +79,17 @@ public class User {
     public void removeItem(Item item) {
         items.remove(item);
         item.clearUser();
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
+    public List<Order> getOrders() {
+        return this.orders;
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
     }
 }
