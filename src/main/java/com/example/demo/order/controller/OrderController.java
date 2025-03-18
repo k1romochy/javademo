@@ -1,5 +1,6 @@
 package com.example.demo.order.controller;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,7 +53,7 @@ public class OrderController {
     @PostMapping("/")
     public OrderDTO createOrder(@RequestBody OrderDTO orderDTO) {
         Order order = new Order();
-        order.setCreatedAt(LocalTime.now());
+        order.setCreatedAt(LocalDateTime.now());
         
         if (orderDTO.getUserId() != null) {
             User user = userService.findUserById(orderDTO.getUserId());
@@ -69,6 +70,7 @@ public class OrderController {
                 }
             }
             savedOrder = orderService.getOrderById(savedOrder.getId());
+
         }
         
         return OrderDTO.fromOrder(savedOrder);
@@ -79,7 +81,7 @@ public class OrderController {
         orderService.removeOrderById(id);
     }
     
-    @PutMapping("/{orderId}/items/{itemId}/")
+    @PostMapping("/{orderId}/items/{itemId}/")
     public List<ItemDTO> addItemToOrder(@PathVariable Long orderId, @PathVariable Long itemId) {
         Item item = itemService.findItemById(itemId);
         

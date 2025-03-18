@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.example.demo.order.repository.Order;
 import com.example.demo.user.repository.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +39,7 @@ public class Item {
     private User user;
 
     @ManyToMany(mappedBy = "items")
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
     
     public Item() {

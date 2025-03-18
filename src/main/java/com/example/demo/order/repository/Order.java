@@ -1,6 +1,6 @@
 package com.example.demo.order.repository;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class Order {
     private Long id;
 
     @Column(nullable=false)
-    private LocalTime created_at;
+    private LocalDateTime created_at;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -44,7 +44,7 @@ public class Order {
     public Order() {
     }
     
-    public Order(Long id, LocalTime created_at, User user) {
+    public Order(Long id, LocalDateTime created_at, User user) {
         this.id = id;
         this.created_at = created_at;
         this.user = user;
@@ -71,11 +71,11 @@ public class Order {
         this.id = id;
     }
 
-    public LocalTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return created_at;
     }
 
-    public void setCreatedAt(LocalTime created_at) {
+    public void setCreatedAt(LocalDateTime created_at) {
         this.created_at = created_at;
     }
 

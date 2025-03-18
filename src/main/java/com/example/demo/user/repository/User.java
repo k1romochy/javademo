@@ -1,10 +1,14 @@
 package com.example.demo.user.repository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import com.example.demo.item.repository.Item;
 import com.example.demo.order.repository.Order;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +18,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
 
 @Entity
 @Table(name = "users")
@@ -27,6 +33,13 @@ public class User {
     
     @Column(nullable = false, unique = true)
     private String email;
+    
+    @Column(nullable = false)
+    @JsonIgnore
+    private String password;
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
@@ -37,10 +50,12 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email) {
+    public User(Long id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
+        this.roles.add("ROLE_USER");
     }
 
     public Long getId() {
@@ -54,6 +69,14 @@ public class User {
     public String getEmail() {
         return email;
     }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public Set<String> getRoles() {
+        return roles;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -65,6 +88,18 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+    
+    public void addRole(String role) {
+        this.roles.add(role);
     }
 
     public List<Item> getItems() {

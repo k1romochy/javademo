@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="add-password-to-users" author="application">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="password"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="password" type="varchar(255)" defaultValue="$2a$10$1234567890123456789012">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="create-user-roles-table" author="application">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user_roles">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="user_roles_user_fk" references="users(id)"/>
+            </column>
+            <column name="roles" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="add-default-roles" author="application">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+            <tableExists tableName="user_roles"/>
+        </preConditions>
+        <sql>
+            INSERT INTO user_roles (user_id, roles)
+            SELECT id, 'ROLE_USER' FROM users
+            WHERE NOT EXISTS (
+                SELECT 1 FROM user_roles ur WHERE ur.user_id = users.id
+            )
+        </sql>
+    </changeSet>
+
+</databaseChangeLog> 

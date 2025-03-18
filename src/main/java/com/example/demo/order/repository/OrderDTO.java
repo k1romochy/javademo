@@ -1,5 +1,6 @@
 package com.example.demo.order.repository;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,20 +9,20 @@ import com.example.demo.item.repository.Item;
 
 public class OrderDTO {
     private Long id;
-    private LocalTime created_at;
+    private LocalDateTime created_at;
     private Long UserId;
     private List<Item> items;
 
     public OrderDTO(){}
 
-    public OrderDTO(Long id, Long UserId, LocalTime created_at, List<Item> items) {
+    public OrderDTO(Long id, Long UserId, LocalDateTime created_at, List<Item> items) {
         this.id = id;
         this.UserId = UserId;
         this.created_at = created_at;
         this.items = items != null ? items : new ArrayList<>();
     }
 
-    public OrderDTO(Long id, Long UserId, LocalTime created_at) {
+    public OrderDTO(Long id, Long UserId, LocalDateTime created_at) {
         this.id = id;
         this.UserId = UserId;
         this.created_at = created_at;
@@ -63,11 +64,11 @@ public class OrderDTO {
         this.id = id;
     }
 
-    public LocalTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return created_at;
     }
 
-    public void setCreatedAt(LocalTime created_at) {
+    public void setCreatedAt(LocalDateTime created_at) {
         this.created_at = created_at;
     }
 
