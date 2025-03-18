@@ -8,7 +8,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.user.repository.User;
 import com.example.demo.user.repository.UserRepositoryDatabase;
-import com.example.demo.user.repository.UserRepositoryRedis;
 import com.example.demo.item.repository.Item;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -16,14 +15,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class UserService {
 
     private final UserRepositoryDatabase userRepositoryDatabase;
-    private final UserRepositoryRedis userRepositoryRedis;
     private final RedisTemplate<String, User> userRedisTemplate;
 
-    public UserService(UserRepositoryDatabase userRepositoryDatabase, 
-                      UserRepositoryRedis userRepositoryRedis,
+    public UserService(UserRepositoryDatabase userRepositoryDatabase,
                       RedisTemplate<String, User> userRedisTemplate) {
         this.userRepositoryDatabase = userRepositoryDatabase;
-        this.userRepositoryRedis = userRepositoryRedis;
         this.userRedisTemplate = userRedisTemplate;
     }
 
@@ -44,21 +40,9 @@ public class UserService {
         else {
             User savedUser = userRepositoryDatabase.save(user);
             try {
-                System.out.println("Attempting to save user to Redis via Repository with ID: " + savedUser.getId());
-                System.out.println("User object being saved: " + savedUser.getName() + ", " + savedUser.getEmail());
-                
-                userRepositoryRedis.save(savedUser);
-                
-                Optional<User> redisUser = userRepositoryRedis.findById(savedUser.getId());
-                if (redisUser.isPresent()) {
-                    System.out.println("Successfully verified user in Redis: " + redisUser.get().getName());
-                } else {
-                    System.out.println("WARNING: Could not find user in Redis after save!");
-                }
-                
-                System.out.println("Completed Redis operations");
+                String redisKey = "user:" + savedUser.getId();
+                userRedisTemplate.opsForValue().set(redisKey, savedUser);
             } catch (Exception e) {
-                System.err.println("Failed to save user to Redis: " + e.getMessage());
                 e.printStackTrace();
             }
             
