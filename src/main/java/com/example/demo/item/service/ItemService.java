@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.item.repository.Item;
 import com.example.demo.item.repository.ItemRepository;
+import com.example.demo.security.SecurityUser;
 import com.example.demo.user.repository.User;
 
 @Service
@@ -26,11 +27,13 @@ public class ItemService {
     }
 
     @Transactional
-    public Item createItem(Item item) {
+    public Item createItem(Item item, SecurityUser securityUser) {
         if (itemRepository.findByName(item.getName()).isPresent()) {
             throw new RuntimeException("Item already exists");
         }
         else {
+            User user = securityUser.getUser();
+            item.setUser(user);
             return itemRepository.save(item);
         }
     }

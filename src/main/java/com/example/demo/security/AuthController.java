@@ -6,7 +6,9 @@ import jakarta.validation.Valid;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,15 +33,22 @@ public class AuthController {
     private final UserRepositoryDatabase userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RedisTemplate<String, User> userRedisTemplate;
     
     public AuthController(AuthenticationManager authenticationManager, UserRepositoryDatabase userRepository,
-            PasswordEncoder passwordEncoder, JwtService jwtService) {
+            PasswordEncoder passwordEncoder, JwtService jwtService, RedisTemplate<String, User> userRedisTemplate) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.userRedisTemplate = userRedisTemplate;
     }
-    
+    private void syncUserData(User user) {
+        String redisKey = "user:" + user.getId();
+        if (userRedisTemplate.opsForValue().get(redisKey) == null) {
+            userRedisTemplate.opsForValue().set(redisKey, user, 7, TimeUnit.DAYS);
+        }
+    }
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
@@ -57,6 +66,8 @@ public class AuthController {
         jwtCookie.setHttpOnly(true);
         jwtCookie.setMaxAge(24 * 60 * 60 * 7);
         response.addCookie(jwtCookie);
+        
+        syncUserData(user);
         
         return ResponseEntity.ok(new AuthResponse(
                 jwt,
@@ -77,8 +88,11 @@ public class AuthController {
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()));
         
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
         
+        String redisKey = "user:" + savedUser.getId();
+        userRedisTemplate.opsForValue().set(redisKey, savedUser, 7, TimeUnit.DAYS);
+
         return ResponseEntity.ok("User registered successfully!");
     }
     

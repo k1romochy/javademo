@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.user.repository.User;
 import com.example.demo.user.repository.UserRepositoryDatabase;
 import com.example.demo.item.repository.Item;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @Service
@@ -50,6 +52,7 @@ public class UserService {
         }
     }
 
+    @Cacheable(value = "users", key = "#id")
     public User findUserById(Long id) {
         return userRepositoryDatabase.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
