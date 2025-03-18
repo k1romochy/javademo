@@ -8,6 +8,9 @@ import java.util.HashSet;
 
 import com.example.demo.item.repository.Item;
 import com.example.demo.order.repository.Order;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +25,9 @@ import jakarta.persistence.FetchType;
 
 @Entity
 @Table(name = "users")
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class User implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +45,11 @@ public class User implements Serializable{
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Item> items = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 

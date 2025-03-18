@@ -56,7 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     
     private String getJwtFromRequest(HttpServletRequest request) {
-        // Проверяем наличие токена в cookie
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {
@@ -65,7 +64,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         
-        // Проверяем наличие токена в заголовке Authorization
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
