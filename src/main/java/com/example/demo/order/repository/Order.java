@@ -1,5 +1,6 @@
 package com.example.demo.order.repository;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import jakarta.persistence.CascadeType;
 
 @Entity
 @Table(name="orders")
-public class Order {
+public class Order implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,14 +1,13 @@
 package com.example.demo.user.repository;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
 import com.example.demo.item.repository.Item;
 import com.example.demo.order.repository.Order;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +22,7 @@ import jakarta.persistence.FetchType;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,7 +34,6 @@ public class User {
     private String email;
     
     @Column(nullable = false)
-    @JsonIgnore
     private String password;
     
     @ElementCollection(fetch = FetchType.EAGER)

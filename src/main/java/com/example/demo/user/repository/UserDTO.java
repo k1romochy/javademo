@@ -10,23 +10,34 @@ public class UserDTO {
     private Long id;
     private String name;
     private String email;
+    private String password;
     private List<ItemDTO> items;
 
     public UserDTO() {
         this.items = new ArrayList<>();
     }
 
-    public UserDTO(Long id, String name, String email) {
+    public UserDTO(Long id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.items = new ArrayList<>();
     }
 
-    public UserDTO(Long id, String name, String email, List<ItemDTO> items) {
+    public UserDTO(Long id, String name, String email, List<ItemDTO> items, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
+        this.items = items != null ? items : new ArrayList<>();
+    }
+
+    public UserDTO(Long id, String name, String email, String password, List<ItemDTO> items) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
         this.items = items != null ? items : new ArrayList<>();
     }
 
@@ -37,7 +48,8 @@ public class UserDTO {
         return new UserDTO(
             user.getId(),
             user.getName(),
-            user.getEmail()
+            user.getEmail(),
+            user.getPassword()
         );
     }
 
@@ -57,6 +69,7 @@ public class UserDTO {
             user.getId(),
             user.getName(),
             user.getEmail(),
+            user.getPassword(),
             itemDTOs
         );
     }
@@ -66,6 +79,9 @@ public class UserDTO {
         user.setId(this.id);
         user.setName(this.name);
         user.setEmail(this.email);
+        if (this.password != null) {
+            user.setPassword(this.password);
+        }
         return user;
     }
 
@@ -91,6 +107,14 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public List<ItemDTO> getItems() {

@@ -7,16 +7,19 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.user.repository.User;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.UserRepositoryDatabase;
+import com.example.demo.user.repository.UserRepositoryRedis;
 import com.example.demo.item.repository.Item;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryDatabase userRepositoryDatabase;
+    private final UserRepositoryRedis userRepositoryRedis;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserRepositoryDatabase userRepositoryDatabase, UserRepositoryRedis userRepositoryRedis) {
+        this.userRepositoryDatabase = userRepositoryDatabase;
+        this.userRepositoryRedis = userRepositoryRedis;
     }
 
     public Map<String, String> Hello() {
@@ -24,28 +27,30 @@ public class UserService {
     }
 
     public List<User> Users() {
-        return userRepository.findAll();
+        return userRepositoryDatabase.findAll();
     }
 
     @Transactional
     public User createUser(User user) {
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        Optional<User> existingUser = userRepositoryDatabase.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             throw new RuntimeException("User already exists");
         }
         else {
-            return userRepository.save(user);
+            userRepositoryDatabase.save(user);
+            userRepositoryRedis.save(user);
+            return user;
         }
     }
 
     public User findUserById(Long id) {
-        return userRepository.findById(id)
+        return userRepositoryDatabase.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     public void deleteUserById(Long id) {
-        if (userRepository.findById(id).isPresent()) {
-            userRepository.deleteById(id);
+        if (userRepositoryDatabase.findById(id).isPresent()) {
+            userRepositoryDatabase.deleteById(id);
         }
         else {
             throw new EntityNotFoundException("User not found");
@@ -54,15 +59,15 @@ public class UserService {
 
     @Transactional
     public User updateUser(Long id, String name, String email) {
-        if (userRepository.findById(id).isPresent()) {
-            User user = userRepository.findById(id).get();
+        if (userRepositoryDatabase.findById(id).isPresent()) {
+            User user = userRepositoryDatabase.findById(id).get();
             if (name != null && !name.equals(user.getName())) {
                 user.setName(name);
             }
             if (email != null && !email.equals(user.getEmail())) {
                 user.setEmail(email);
             }
-            return userRepository.save(user);
+            return userRepositoryDatabase.save(user);
         }
         else {
             throw new EntityNotFoundException("User not found");
@@ -78,7 +83,7 @@ public class UserService {
     public List<Item> addUserItem(Long id, Item item) {
         User user = findUserById(id);
         user.addItem(item);
-        userRepository.save(user);
+        userRepositoryDatabase.save(user);
         return user.getItems();
     }
 
@@ -86,7 +91,7 @@ public class UserService {
     public List<Item> removeUserItem(Long id, Item item) {
         User user = findUserById(id);
         user.removeItem(item);
-        userRepository.save(user);
+        userRepositoryDatabase.save(user);
         return user.getItems();
     }
 
@@ -94,7 +99,7 @@ public class UserService {
     public List<Item> clearUserItems(Long id) {
         User user = findUserById(id);
         user.getItems().clear();
-        userRepository.save(user);
+        userRepositoryDatabase.save(user);
         return user.getItems();
     }
 }

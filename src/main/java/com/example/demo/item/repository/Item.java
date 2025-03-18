@@ -1,6 +1,7 @@
 package com.example.demo.item.repository;
 
 import java.util.List;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.example.demo.order.repository.Order;
@@ -20,7 +21,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "items")
-public class Item {
+public class Item implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
