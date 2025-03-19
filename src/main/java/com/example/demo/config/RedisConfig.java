@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import com.example.demo.user.repository.User;
+import com.example.demo.item.repository.Item;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -78,6 +79,24 @@ public class RedisConfig {
         template.setConnectionFactory(connectionFactory);
         
         Jackson2JsonRedisSerializer<User> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, User.class);
+        
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(serializer);
+        
+        template.afterPropertiesSet();
+        return template;
+    }
+    
+    @Bean
+    public RedisTemplate<String, Item> itemRedisTemplate(
+            RedisConnectionFactory connectionFactory, 
+            @Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
+        RedisTemplate<String, Item> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        
+        Jackson2JsonRedisSerializer<Item> serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Item.class);
         
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(serializer);
