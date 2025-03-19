@@ -46,7 +46,7 @@ public class AuthController {
     private void syncUserData(User user) {
         String redisKey = "user:" + user.getId();
         if (userRedisTemplate.opsForValue().get(redisKey) == null) {
-            userRedisTemplate.opsForValue().set(redisKey, user, 7, TimeUnit.DAYS);
+            userRedisTemplate.opsForValue().set(redisKey, user, 21, TimeUnit.DAYS);
         }
     }
     @PostMapping("/login")
@@ -91,7 +91,7 @@ public class AuthController {
         User savedUser = userRepository.save(user);
         
         String redisKey = "user:" + savedUser.getId();
-        userRedisTemplate.opsForValue().set(redisKey, savedUser, 7, TimeUnit.DAYS);
+        userRedisTemplate.opsForValue().set(redisKey, savedUser, 21, TimeUnit.DAYS);
 
         return ResponseEntity.ok("User registered successfully!");
     }

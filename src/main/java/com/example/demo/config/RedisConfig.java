@@ -26,6 +26,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories(basePackages = "com.example.demo.user.repository")
@@ -88,14 +89,13 @@ public class RedisConfig {
     }
 
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory, 
-                                     @Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
-        Jackson2JsonRedisSerializer<Object> jsonSerializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class);
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        JdkSerializationRedisSerializer jdkSerializer = new JdkSerializationRedisSerializer();
         
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofDays(7))
+            .entryTtl(Duration.ofDays(2))
             .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer)
+                RedisSerializationContext.SerializationPair.fromSerializer(jdkSerializer)
             );
         
         return RedisCacheManager.builder(redisConnectionFactory)

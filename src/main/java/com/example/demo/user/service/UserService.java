@@ -29,6 +29,7 @@ public class UserService {
         return Map.of("Message", "Hello World");
     }
 
+    @Cacheable(value = "usersList")
     public List<User> Users() {
         return userRepositoryDatabase.findAll();
     }
