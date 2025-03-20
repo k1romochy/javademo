@@ -17,8 +17,6 @@ services:
       - SPRING_DATASOURCE_PASSWORD=Egor100209
       - SPRING_REDIS_HOST=redis
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-      - SPRING_LIQUIBASE_ENABLED=true
-      - SPRING_LIQUIBASE_CHANGE_LOG=classpath:db/changelog/db.changelog-master.xml
     networks:
       - app-network
     restart: unless-stopped
@@ -34,7 +32,6 @@ services:
       - POSTGRES_PASSWORD=Egor100209
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s

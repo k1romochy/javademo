@@ -8,10 +8,9 @@ until nc -z postgres 5432; do
 done
 echo "PostgreSQL доступен!"
 
-# Запуск приложения с миграциями
-echo "Запуск приложения с применением миграций Liquibase..."
+# Запуск приложения
+echo "Запуск приложения..."
 java ${JAVA_OPTS} \
   -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} \
-  -Dspring.liquibase.enabled=true \
   -Djava.security.egd=file:/dev/./urandom \
   -jar /app/app.jar 
