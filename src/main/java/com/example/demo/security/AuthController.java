@@ -23,19 +23,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.user.repository.User;
-import com.example.demo.user.repository.UserRepositoryDatabase;
+import com.example.demo.user.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     
     private final AuthenticationManager authenticationManager;
-    private final UserRepositoryDatabase userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RedisTemplate<String, User> userRedisTemplate;
     
-    public AuthController(AuthenticationManager authenticationManager, UserRepositoryDatabase userRepository,
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
             PasswordEncoder passwordEncoder, JwtService jwtService, RedisTemplate<String, User> userRedisTemplate) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
