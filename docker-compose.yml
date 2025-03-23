@@ -19,6 +19,10 @@ services:
       - SPRING_DATASOURCE_PASSWORD=Egor100209
       - SPRING_REDIS_HOST=redis
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TOPIC_EXAMPLE=example-topic
+      - SPRING_KAFKA_ADMIN_AUTO_CREATE=true
+      - SPRING_KAFKA_ADMIN_PROPERTIES_NUM_PARTITIONS=3
+      - SPRING_KAFKA_ADMIN_PROPERTIES_DEFAULT_REPLICATION_FACTOR=1
     networks:
       - app-network
     restart: unless-stopped
@@ -79,6 +83,7 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     networks:
       - app-network
     restart: unless-stopped

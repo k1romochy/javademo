@@ -16,7 +16,7 @@ public class KafkaController {
 
     private final KafkaService kafkaService;
     
-    @Value("${kafka.topic.example:example-topic}")
+    @Value("${kafka.topic.example}")
     private String topicName;
 
     @Autowired
@@ -25,8 +25,9 @@ public class KafkaController {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<String> sendMessage(@RequestBody User user) {
-        kafkaService.send(topicName, user);
+    public ResponseEntity<String> sendMessage(@RequestBody Object payload) {
+        System.out.println("Отправка сообщения в топик: " + topicName);
+        kafkaService.send(topicName, payload);
         return ResponseEntity.ok("Сообщение успешно отправлено в топик: " + topicName);
     }
 } 
